@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox id="Main_Vbox" prefHeight="725.0" prefWidth="654.0" spacing="10.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.gpt_2_midi.MidiController">
+   <GridPane id="_Grid_pane" prefHeight="235.0" prefWidth="648.0">
+     <columnConstraints>
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="573.1043362882504" minWidth="10.0" prefWidth="43.24345712816788" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="573.1043362882504" minWidth="10.0" prefWidth="137.57394024046712" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="573.1043362882504" minWidth="0.0" prefWidth="9.017387713773104" />
+       <ColumnConstraints hgrow="SOMETIMES" maxWidth="573.1043362882504" minWidth="10.0" prefWidth="110.0260651961618" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="573.1043362882504" minWidth="6.51306917071571" prefWidth="6.51306917071571" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="573.1043362882504" minWidth="10.0" prefWidth="60.77391170970441" />
+       <ColumnConstraints hgrow="SOMETIMES" maxWidth="320.1651883390316" minWidth="4.843438058431332" prefWidth="4.843438058431332" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="320.1651883390316" minWidth="10.0" prefWidth="83.65218250642442" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="320.1651883390316" minWidth="10.0" prefWidth="15.869570174046032" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="320.1651883390316" minWidth="10.0" prefWidth="143.26089038409015" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="320.1651883390316" minWidth="10.0" prefWidth="44.591385264982705" />
+     </columnConstraints>
+     <rowConstraints>
+       <RowConstraints maxHeight="107.6869508632956" minHeight="0.0" prefHeight="100.17390459864717" vgrow="SOMETIMES" />
+         <RowConstraints maxHeight="101.79130838491518" minHeight="0.0" prefHeight="22.539142950162628" vgrow="SOMETIMES" />
+       <RowConstraints maxHeight="196.156517118227" minHeight="0.0" prefHeight="20.869563408258585" vgrow="SOMETIMES" />
+       <RowConstraints maxHeight="199.3391472436801" minHeight="0.0" prefHeight="14.19129947424392" vgrow="SOMETIMES" />
+         <RowConstraints maxHeight="199.3391472436801" minHeight="0.0" prefHeight="20.86956141105904" vgrow="SOMETIMES" />
+         <RowConstraints maxHeight="199.3391472436801" minHeight="0.0" prefHeight="8.347836278327748" vgrow="SOMETIMES" />
+         <RowConstraints maxHeight="199.3391472436801" minHeight="10.0" prefHeight="35.22608443896584" vgrow="SOMETIMES" />
+     </rowConstraints>
+      <children>
+         <Button fx:id="btn_gen" mnemonicParsing="false" onAction="#handleGeneratePrompt" prefHeight="27.0" prefWidth="136.0" text="Generate prompt.." GridPane.columnIndex="9" GridPane.rowIndex="6" />
+         <TextArea fx:id="music_genre" promptText="Classical" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+         <TextArea fx:id="bpm_" prefHeight="15.0" prefWidth="246.0" promptText="120" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+         <TextArea fx:id="signature" prefHeight="200.0" prefWidth="200.0" promptText="4/4" GridPane.columnIndex="7" GridPane.rowIndex="4" />
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Music genre:" wrappingWidth="81.67418718338013" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="BPM:" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Time signature" GridPane.columnIndex="7" GridPane.rowIndex="1" />
+         <TextArea fx:id="time" prefHeight="38.0" prefWidth="172.0" promptText="3" GridPane.columnIndex="9" GridPane.rowIndex="4" />
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Song duration (minutes)" GridPane.columnIndex="9" GridPane.rowIndex="2" />
+         <MenuButton fx:id="menu_genre" mnemonicParsing="false" text="Music genre" GridPane.columnIndex="1" GridPane.rowIndex="2">
+           <items>
+
+           </items>
+         </MenuButton>
+         <MenuButton fx:id="menu_btn_bpm" mnemonicParsing="false" text="BPM" GridPane.columnIndex="5" GridPane.rowIndex="2">
+           <items>
+
+           </items>
+         </MenuButton>
+         <MenuButton fx:id="menu_btn_sign" mnemonicParsing="false" text="Signature" GridPane.columnIndex="7" GridPane.rowIndex="2">
+           <items>
+
+           </items>
+         </MenuButton>
+         <MenuButton fx:id="menu_btn_key" mnemonicParsing="false" text="Key" GridPane.columnIndex="3" GridPane.rowIndex="2">
+           <items>
+
+           </items>
+         </MenuButton>
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Key" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+         <TextArea fx:id="key_txt" prefHeight="200.0" prefWidth="200.0" promptText="C" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+         <ImageView fitHeight="102.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+            <image>
+               <Image url="@logo.png" />
+            </image>
+         </ImageView>
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GPT 2 MIDI" GridPane.columnIndex="3">
+            <font>
+               <Font size="35.0" />
+            </font>
+         </Text>
+      </children>
+   </GridPane>
+   <GridPane prefHeight="420.0" prefWidth="633.0">
+     <columnConstraints>
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.1825526586874" minWidth="10.0" prefWidth="43.91302097947931" />
+       <ColumnConstraints hgrow="SOMETIMES" maxWidth="611.5217737673097" minWidth="10.0" prefWidth="572.3304778556612" />
+       <ColumnConstraints hgrow="SOMETIMES" maxWidth="321.0000272062191" minWidth="10.0" prefWidth="37.243468698310494" />
+     </columnConstraints>
+     <rowConstraints>
+       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+     </rowConstraints>
+      <children>
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Channel 1" GridPane.columnIndex="1" />
+          <TextArea fx:id="channel1" prefHeight="100.0" prefWidth="402.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Channel 2" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+          <TextArea fx:id="channel2" prefHeight="100.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Channel 3" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+          <TextArea fx:id="channel3" prefHeight="100.0" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Channel 4" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+          <TextArea fx:id="channel4" prefHeight="100.0" prefWidth="478.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Channel 5" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Channel 6" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Channel 7" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Channel 8" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+         <TextArea fx:id="channel5" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+         <TextArea fx:id="channel6" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+         <TextArea fx:id="channel7" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+         <TextArea fx:id="channel8" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+      </children>
+   </GridPane>
+   <GridPane prefHeight="92.0" prefWidth="634.0">
+     <columnConstraints>
+       <ColumnConstraints hgrow="SOMETIMES" maxWidth="559.7478299405941" minWidth="10.0" prefWidth="46.93038546268363" />
+         <ColumnConstraints hgrow="SOMETIMES" maxWidth="559.7478299405941" minWidth="10.0" prefWidth="463.4870233699463" />
+       <ColumnConstraints hgrow="SOMETIMES" maxWidth="320.1651883390316" minWidth="10.0" prefWidth="148.7999902389904" />
+     </columnConstraints>
+     <rowConstraints>
+       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+     </rowConstraints>
+      <children>
+          <Button fx:id="btn_save" alignment="TOP_LEFT" contentDisplay="TOP" onAction="#handleGenerateButton" prefHeight="27.0" prefWidth="105.0" text="Save Midi file.." GridPane.columnIndex="2" GridPane.rowIndex="1" />
+         <Button mnemonicParsing="false" text="About" onAction="#handleAbout" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      </children>
+   </GridPane>
+
+
+</VBox>
