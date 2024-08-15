@@ -6,7 +6,6 @@ import java.awt.Desktop
 
 class AboutController {
 
-
   @FXML
   private fun handleDonate() {
       try {

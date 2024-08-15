@@ -10,10 +10,7 @@ import javafx.scene.control.MenuButton
 import javafx.scene.control.TextArea
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
-import javafx.stage.FileChooser
 import javafx.stage.Stage
-import java.io.File
-import javax.sound.midi.*
 import javafx.scene.control.MenuItem
 import javafx.scene.control.Tooltip
 import javafx.application.Platform
@@ -23,34 +20,14 @@ import javafx.scene.image.Image
 
 class MidiController {
 
+    lateinit var btn_save: Button // Botón para guardar el fichero .midi
+
     @FXML
     private lateinit var btn_gen: Button
-
-
 
     @FXML
     private lateinit var channel1: TextArea
 
-    @FXML
-    private lateinit var channel2: TextArea
-
-    @FXML
-    private lateinit var channel3: TextArea
-
-    @FXML
-    private lateinit var channel4: TextArea
-
-    @FXML
-    private lateinit var channel5: TextArea
-
-    @FXML
-    private lateinit var channel6: TextArea
-
-    @FXML
-    private lateinit var channel7: TextArea
-
-    @FXML
-    private lateinit var channel8: TextArea
 
     @FXML
     private lateinit var music_genre: TextArea // Género musical
@@ -68,9 +45,6 @@ class MidiController {
     private lateinit var signature: TextArea // Compás
 
     @FXML
-    private lateinit var btn_save: Button // Botón para guardar el fichero .midi
-
-    @FXML
     private lateinit var menu_genre: MenuButton
 
     @FXML
@@ -82,6 +56,9 @@ class MidiController {
     @FXML
     private lateinit var menu_btn_key: MenuButton
 
+    private var aboutWin: Boolean = false
+
+    var version: String = "0.5 Beta"
 
     // Variables que se actualizan automáticamente al llenar los cuadros de textos
     private var genreText: String = ""
@@ -90,8 +67,14 @@ class MidiController {
     private var signatureText: String = ""
     private var timeText: String = ""
 
+
+    private var Midi_obj = Midi()
+
+
     @FXML
-    private fun initialize() {
+    fun initialize() {
+
+        enable_text_area()
 
         // Lista de géneros musicales
         val genres = listOf(
@@ -196,36 +179,62 @@ class MidiController {
         }
 
 
+
     }
+
+
+    private fun disable_text_area(){
+        channel1.isDisable = true
+
+    }
+
+    fun enable_text_area(){
+        channel1.isDisable = false
+
+    }
+
 
     // Accion del boton about
     @FXML
     private fun handleAbout() {
-        try {
-            // Cargar el archivo FXML de la ventana "about"
-            val loader = FXMLLoader(javaClass.getResource("about.fxml"))
 
-            val scene_ = Scene(loader.load(), 320.0, 355.0)
+        if (!aboutWin) {
 
-            // Crear una nueva instancia de Stage
-            val aboutStage = Stage()
+            try {
+                // Cargar el archivo FXML de la ventana "about"
+                val loader = FXMLLoader(javaClass.getResource("about.fxml"))
 
-            // Establecer el icono de la aplicación
-            val icon = Image(javaClass.getResourceAsStream("logo.png"))
-            aboutStage.icons.add(icon)
+                val scene_ = Scene(loader.load(), 320.0, 355.0)
 
-            aboutStage.title = "About"
-            aboutStage.isResizable = false
-            aboutStage.scene = scene_
+                // Crear una nueva instancia de Stage
+                val aboutStage = Stage()
 
-            // Mostrar la nueva ventana
-            aboutStage.show()
-        } catch (e: LoadException) {
-            e.printStackTrace()
-            println("Error loading FXML file: ${e.message}")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            println("General error: ${e.message}")
+                // Establecer el icono de la aplicación
+                val icon = Image(javaClass.getResourceAsStream("logo.png"))
+                aboutStage.icons.add(icon)
+
+                aboutStage.title = "About"
+                aboutStage.isResizable = false
+                aboutStage.scene = scene_
+
+                // Mostrar la nueva ventana
+                aboutStage.show()
+
+                aboutWin = true
+
+                // Agregar un listener para limpiar la referencia cuando la ventana se cierre
+                aboutStage.setOnHiding {
+                    aboutWin = false
+                }
+
+            } catch (e: LoadException) {
+                e.printStackTrace()
+                println("Error loading FXML file: ${e.message}")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                println("General error: ${e.message}")
+            }
+
         }
     }
 
@@ -235,40 +244,56 @@ class MidiController {
     // Accion del boton de generar el prompt
     @FXML
     private fun handleGeneratePrompt() {
-        // Crear el texto predeterminado basado en las entradas
-        val promptText = "Create a song, based on this format (for example):\n" +
-                "\n" +
-                "Let's say you want the following notes to be played on Channel 1 (the first text box):\n" +
-                "\n" +
-                "Note C4 (60), duration of 24 ticks, with a speed of 93.\n" +
-                "Note D4 (62), duration of 48 ticks, with a speed of 100.\n" +
-                "Note E4 (64), duration of 24 ticks, with a speed of 80.\n" +
-                "\n" +
-                "The text you would paste in the first text box would be:\n" +
-                "60 24 93, 62 48 100, 64 24 80\n" +
-                "\n" +
-                "Prompt for the generation is:\n" +
-                "Now I have 8 textboxes/channels and I want you to create a song with characteristics of $keyText key signature, $bpmText bpm and time signature $signatureText of $genreText music genre, with a duration of the song approximately $timeText minutes."
 
-        // Copiar el texto al portapapeles
-        val clipboard = Clipboard.getSystemClipboard()
-        val content = ClipboardContent()
-        content.putString(promptText)
-        clipboard.setContent(content)
+        val pase = prompt_verification()
 
-        // Mostrar el aviso
-        val tooltip = Tooltip("Content copied to clipboard successfully!")
-        Tooltip.install(btn_gen, tooltip)
+        if (pase) {
 
-        // Ocultar el tooltip después de un tiempo
-        tooltip.show(btn_gen, btn_gen.scene.window.x + 200, btn_gen.scene.window.y + 250)
-        java.util.Timer().schedule(object : java.util.TimerTask() {
-            override fun run() {
-                Platform.runLater {
-                    tooltip.hide()
+            // Crear el texto predeterminado basado en las entradas
+            val promptText = "Create a song, based on this format (for example):\n" +
+                    "\n" +
+                    "Let's say you want the following notes format to be played on my TextArea:\n" +
+                    "\n" +
+                    "Number of channel midi (1-16).\n" +
+                    "Instrument (0-127).\n" +
+                    "Position of note (ticks).\n" +
+                    "Note E4 (64).\n" +
+                    "Duration (ticks).\n" +
+                    "Velocity (0-127).\n" +
+                    "\n" +
+                    "The text you would paste in the first text box would be:\n" +
+                    "01 00 0 60 24 93, 02 00 24 62 24 80, 03 41 48 64 24 100, 10 00 72 35 48 127, .......\n" +
+                    "NOTE: DO NOT USE COMMENTS ON THE PROMPT GENERATED \n" +
+                    "\n" +
+                    "Prompt for the generation is:\n" +
+                    "Now I have a TextArea and I want you to create a song with characteristics of $keyText key signature, $bpmText bpm and time signature $signatureText of $genreText music genre, with a duration of the song approximately $timeText seconds."
+
+            // Copiar el texto al portapapeles
+            val clipboard = Clipboard.getSystemClipboard()
+            val content = ClipboardContent()
+            content.putString(promptText)
+            clipboard.setContent(content)
+
+            // Mostrar el aviso
+            val tooltip = Tooltip("Content copied to clipboard successfully!")
+            Tooltip.install(btn_gen, tooltip)
+
+            // Ocultar el tooltip después de un tiempo
+            tooltip.show(btn_gen, btn_gen.scene.window.x + 200, btn_gen.scene.window.y + 250)
+            java.util.Timer().schedule(object : java.util.TimerTask() {
+                override fun run() {
+                    Platform.runLater {
+                        tooltip.hide()
+                    }
                 }
-            }
-        }, 2000) // Ocultar después de 2 segundos
+            }, 2000) // Ocultar después de 2 segundos
+
+        } else {
+            // Mostrar el aviso
+            val tooltip = Tooltip("Error: empty data, please check bpm/signature data")
+            Tooltip.install(btn_gen, tooltip)
+        }
+
 
 
     }
@@ -278,153 +303,105 @@ class MidiController {
     // Accion del boton de guardar el fichero
     @FXML
     private fun handleGenerateButton() {
+
         try {
-            // Verificar si el canal 1 está vacío o no contiene datos válidos
-            if (channel1.text.isBlank() || !containsValidData(channel1.text)) {
-                showAlert("Channel 1 empty", "The channel do not have a valid data.")
-                return
+
+            disable_text_area()
+
+            val pasar = verifificar()
+
+            if (pasar) {
+                println("Generando secuencia")
+                Midi_obj.generar_secuencia(channel1, bpmText, signatureText)
+
+                Midi_obj.save_file(btn_save) // Guardar fichero
+                enable_text_area()
+            } else {
+                enable_text_area()
             }
 
-            println("Generando secuencia")
-            // Generar la secuencia MIDI con BPM y Time Signature
-            val sequence = generateMidiSequence(
-                listOf(channel1.text, channel2.text, channel3.text, channel4.text, channel5.text, channel6.text, channel7.text, channel8.text),
-                bpmText,
-                signatureText
-            )
 
-            // Guardar la secuencia MIDI en un archivo
-            saveMidiFile(sequence)
-            println("Guardando secuencia en un archivo")
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    // Función para generar la secuencia MIDI
-    fun generateMidiSequence(channelTexts: List<String>, bpmText: String, signatureText: String): Sequence {
-        val sequence = Sequence(Sequence.PPQ, 24)
-        val track = sequence.createTrack()
-
-        // Procesar y agregar notas de cada canal
-        channelTexts.forEachIndexed { channelIndex, channelText ->
-            val events = parseChannelText(channelText, channelIndex)
-            events.forEach { track.add(it) }
-        }
-
-        // Agregar BPM
-        val bpm = bpmText.toIntOrNull() ?: 120 // Valor predeterminado si no se puede convertir
-        val microsecondsPerQuarterNote = 60000000 / bpm
-        val bpmMessage = MetaMessage()
-        val data = byteArrayOf(
-            ((microsecondsPerQuarterNote shr 16) and 0xFF).toInt().toByte(),
-            ((microsecondsPerQuarterNote shr 8) and 0xFF).toInt().toByte(),
-            (microsecondsPerQuarterNote and 0xFF).toInt().toByte()
-        )
-        bpmMessage.setMessage(0x51, data, data.size)
-        track.add(javax.sound.midi.MidiEvent(bpmMessage, 0))
-
-        // Agregar Time Signature
-        val signatureParts = signatureText.split("/")
-        if (signatureParts.size == 2) {
-            val numerator = signatureParts[0].toIntOrNull() ?: 4
-            val denominator = signatureParts[1].toIntOrNull() ?: 4
-
-            val signatureMessage = MetaMessage()
-            val signatureData = byteArrayOf(
-                numerator.toByte(),
-                (Math.log(denominator.toDouble()) / Math.log(2.0)).toInt().toByte(),
-                24.toByte(),  // MIDI clocks per metronome click
-                8.toByte()    // 32nd notes per 24 MIDI clocks
-            )
-            signatureMessage.setMessage(0x58, signatureData, signatureData.size)
-            track.add(javax.sound.midi.MidiEvent(signatureMessage, 0))
-        }
-
-        return sequence
-    }
-
-    // Función para parsear el texto de los canales
-    private fun parseChannelText(text: String, channel: Int): List<MidiEvent> {
-        val events = mutableListOf<MidiEvent>()
-        var tick = 0L
-
-        text.split(",").forEach { noteData ->
-            val trimmedNoteData = noteData.trim()
-
-            // Verifica si la cadena no está vacía
-            if (trimmedNoteData.isNotEmpty()) {
-                val noteParts = trimmedNoteData.split(" ").map { it.trim() }
-
-                // Asegúrate de que el texto tenga tres partes (nota, duración, velocidad)
-                if (noteParts.size == 3) {
-                    try {
-                        val note = noteParts[0].toInt()
-                        val duration = noteParts[1].toInt()
-                        val velocity = noteParts[2].toInt()
-
-                        val messageOn = ShortMessage(ShortMessage.NOTE_ON, channel, note, velocity)
-                        val messageOff = ShortMessage(ShortMessage.NOTE_OFF, channel, note, velocity)
-
-                        events.add(MidiEvent(messageOn, tick))
-                        tick += duration.toLong()
-                        events.add(MidiEvent(messageOff, tick))
-                    } catch (e: NumberFormatException) {
-                        e.printStackTrace()
-                        // Puedes manejar el error aquí, como saltar esta entrada o mostrar un mensaje al usuario
-                    }
-                } else {
-                    // Manejo de entradas mal formadas
-                    println("Entrada malformada: $trimmedNoteData")
-                }
-            }
-        }
-
-        return events
-    }
-
-    // Función para verificar si el texto contiene datos válidos
-    private fun containsValidData(text: String): Boolean {
-        // Verificar si el texto contiene al menos una entrada válida
-        return text.split(",").any { noteData ->
-            val trimmedNoteData = noteData.trim()
-            if (trimmedNoteData.isNotEmpty()) {
-                val noteParts = trimmedNoteData.split(" ").map { it.trim() }
-                if (noteParts.size == 3) {
-                    try {
-                        noteParts.map { it.toInt() }
-                        return true
-                    } catch (e: NumberFormatException) {
-                        return false
-                    }
-                }
-            }
-            false
-        }
-    }
-
-    // Función para mostrar un aviso
-    private fun showAlert(title: String, message: String) {
+   // Función para mostrar un aviso
+   private fun showAlert(title: String, message: String) {
         val alert = Alert(Alert.AlertType.WARNING)
         alert.title = title
         alert.headerText = null
         alert.contentText = message
         alert.showAndWait()
-    }
+   }
 
-    // Función para guardar el archivo MIDI
-    private fun saveMidiFile(sequence: Sequence) {
-        // Crear un FileChooser
-        val fileChooser = FileChooser()
-        fileChooser.title = "Save the MIDI file"
-        fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("Files MIDI", "*.mid"))
+   // Verificar datos antes de mostrar aviso
+   private fun verifificar(): Boolean {
+        // Verificar si el canal 1 está vacío o no contiene datos válidos
+        if (channel1.text.isBlank() || !containsValidData(channel1.text) || (signatureText.isBlank()) || bpmText.isBlank()) {
+            showAlert("Channel 1 empty", "The channel/signature/bpm do not have a valid data, check signature, channel and bpm.")
 
-        // Mostrar el diálogo para guardar archivo usando el Stage actual
-        val file: File? = fileChooser.showSaveDialog(btn_save.scene.window as Stage)
-
-        // Verificar si se seleccionó un archivo
-        if (file != null) {
-            MidiSystem.write(sequence, 1, file)
+            return false
+        } else {
+            return true
         }
     }
+
+    private fun prompt_verification(): Boolean {
+        if (signatureText.isBlank() || bpmText.isBlank() || genreText.isBlank() || timeText.isBlank() || keyText.isBlank() ) {
+            showAlert("Prompt generation error", "Maybe the signature, bmp, key, song time or music genre are empty, please add a data")
+
+            return false
+        } else {
+            return true
+        }
+    }
+
+    @FXML
+    private fun play_seq() {
+
+        val pase = verifificar()
+
+        if (pase){
+
+            Midi_obj.generar_secuencia(channel1, bpmText, signatureText)
+            Midi_obj.play()
+
+        }
+
+    }
+
+    @FXML
+    private fun stop_seq (){
+        enable_text_area()
+        Midi_obj.stop()
+    }
+
+
+    // Función para verificar si el texto contiene datos válidos
+    private fun containsValidData(text: String): Boolean {
+        return text.split(",").any { noteData ->
+            val trimmedNoteData = noteData.trim()
+            if (trimmedNoteData.isNotEmpty()) {
+                val noteParts = trimmedNoteData.split(" ").map { it.trim() }
+                if (noteParts.size == 6) {
+                    try {
+                        noteParts.forEach { it.toInt() }
+                        true
+                    } catch (e: NumberFormatException) {
+                        false
+                    }
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        }
+    }
+
+
+
+
+
 }

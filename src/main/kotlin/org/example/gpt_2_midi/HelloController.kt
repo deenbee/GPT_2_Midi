@@ -9,6 +9,7 @@ import javafx.scene.image.Image
 
 class MidiApp : Application() {
 
+    private lateinit var midiController: MidiController
 
     override fun start(primaryStage: Stage) {
 
@@ -19,7 +20,9 @@ class MidiApp : Application() {
         val icon = Image(javaClass.getResourceAsStream("logo.png"))
         primaryStage.icons.add(icon)
 
-        primaryStage.title = "GPT 2 MIDI"
+        midiController = MidiController()
+
+        primaryStage.title = "GPT 2 MIDI ${midiController.version}"
         primaryStage.scene = scene
         primaryStage.isResizable = false
         primaryStage.show()
